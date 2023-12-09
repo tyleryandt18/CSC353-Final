@@ -52,13 +52,43 @@ cursor.close()
 # Reopen the cursor
 cursor = connection.cursor()
 
-# Keep track of seen teams
+# Keep track of seen data entries
 teams = {}
+conferences = {}
 
 # Iterate over csv files
 for folder in glob.glob("data/archive/cfbstats*"):
     files = os.listdir(folder)
     for file in files:
         if file == "team.csv":
-            with open(file, 'r') as f:
+            first_line = True
+            with open(folder + '/' + file, 'r') as f:
                 for line in f:
+                    if first_line:
+                        first_line = False
+                        continue
+
+                    line = line.split(',')
+                    team_id = line[0]
+                    team_name = line[1]
+                    conference_id = line[2]
+
+                    if team_id not in teams:
+                        teams[team_id] = team_name
+                        insert_query = "INSERT INTO teams (id, name, conference_id) VALUES (%s, %s, %s)"
+                        query_params = (team_id, team_name, conference_id)
+
+                        try:
+                            cursor.execute(insert_query, query_params)
+                        except mysql.connector.Error as error_descriptor:
+                            print("Failed inserting tuple: {}".format(error_descriptor))
+
+        if file == "conference.csv":
+            first_line = True
+            with open(folder + '/' + file, 'r') as f:
+                if first_line:
+                    first_line = False
+                    continue
+                
+                line = line.split(',')
+                conference_id = 

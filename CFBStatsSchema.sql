@@ -16,16 +16,17 @@ USE cfbStats;
 
 CREATE TABLE teams (
     id INT,
-    name VARCHAR(25), 
+    name VARCHAR(30), 
     conference_id INT,
-    PRIMARY KEY(id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE SET NULL
 );
 
--- CREATE TABLE conferences (
---     id
---     name
---     PRIMARY KEY(id)
--- );
+CREATE TABLE conferences (
+    id INT,
+    name VARCHAR(30),
+    PRIMARY KEY (id)
+);
 
 -- CREATE TABLE games (
 --     id
