@@ -15,7 +15,7 @@ CREATE TABLE teams (
     FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE SET NULL
 );
 CREATE TABLE players (
-    id INT,
+    id INT(10),
     first_name VARCHAR(30),
     last_name VARCHAR(30),
     season VARCHAR(4),

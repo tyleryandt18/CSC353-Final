@@ -56,6 +56,26 @@ cursor = connection.cursor()
 teams = {}
 conferences = {}
 
+def filter_pos(pos):
+    """
+    A helper method that filters a position into one of the three respective classes.
+    
+    Parameters:
+        - pos: the player's position
+    
+    Returns:
+        the respective position class
+    """
+
+    if pos in ("RB", "QB", "WR", "TE", "OL", "FB"):
+        return "OFF"
+    elif pos in ("DB", "LB", "DL", "S"):
+        return "DEF"
+    elif pos in ("KR", "PR", "PK", "P", "K"):
+        return "ST"
+    else:
+        return "NULL"
+
 # Iterate over csv files
 for folder in glob.glob("data/archive/cfbstats*"):
     season = folder.split("-")[2]
@@ -123,7 +143,7 @@ for folder in glob.glob("data/archive/cfbstats*"):
                     number = line[4]
                     class_year = line[5]
                     position = line[6]
-                    pos_class = "NA" # TO-DO: filter all possible positions into respective categories
+                    pos_class = filter_pos(position)
 
                     insert_query = "INSERT INTO players (id, first_name, last_name, season, team_id, pos, position_class, number, class) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                     query_params = (player_id, first_name, last_name, season, team_id, position, pos_class, number, class_year)
