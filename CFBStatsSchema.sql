@@ -1,19 +1,12 @@
 DROP Schema if EXISTS cfbStats;
 CREATE Schema cfbStats;
 USE cfbStats;
-
--- CREATE TABLE players (
---     id
---     name
---     season
---     team
---     pos
---     position_class
---     number
---     class
---     PRIMARY KEY(id)
--- );
-
+CREATE TABLE conferences (
+    id INT,
+    name VARCHAR(30),
+    subdivision VARCHAR(5),
+    PRIMARY KEY (id)
+);
 CREATE TABLE teams (
     id INT,
     name VARCHAR(30), 
@@ -21,11 +14,18 @@ CREATE TABLE teams (
     PRIMARY KEY (id),
     FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE SET NULL
 );
-
-CREATE TABLE conferences (
+CREATE TABLE players (
     id INT,
-    name VARCHAR(30),
-    PRIMARY KEY (id)
+    first_name VARCHAR(30),
+    last_name VARCHAR(30),
+    season VARCHAR(4),
+    team_id INT,
+    pos VARCHAR(4),
+    position_class VARCHAR(3),
+    number VARCHAR(3),
+    class VARCHAR(2),
+    PRIMARY KEY(id, season),
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE SET NULL
 );
 
 -- CREATE TABLE games (

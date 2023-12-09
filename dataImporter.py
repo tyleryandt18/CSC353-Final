@@ -58,8 +58,32 @@ conferences = {}
 
 # Iterate over csv files
 for folder in glob.glob("data/archive/cfbstats*"):
+    season = folder.split("-")[2]
     files = os.listdir(folder)
     for file in files:
+        if file == "conference.csv":
+            first_line = True
+            with open(folder + '/' + file, 'r') as f:
+                for line in f:
+                    if first_line:
+                        first_line = False
+                        continue
+                    
+                    line = line.split(',')
+                    conference_id = line[0]
+                    conference_name = line[1]
+                    subdivison = line[2]
+
+                    if conference_id not in conferences:
+                        conferences[conference_id] = conference_name
+                        insert_query = "INSERT INTO conferences (id, name, subdivision) VALUES (%s, %s, %s)"
+                        query_params = (conference_id, conference_name, subdivison)
+
+                        try:
+                            cursor.execute(insert_query, query_params)
+                        except mysql.connector.Error as e:
+                            print("Failed inserting tuple: {}".format(e))
+
         if file == "team.csv":
             first_line = True
             with open(folder + '/' + file, 'r') as f:
@@ -80,15 +104,34 @@ for folder in glob.glob("data/archive/cfbstats*"):
 
                         try:
                             cursor.execute(insert_query, query_params)
-                        except mysql.connector.Error as error_descriptor:
-                            print("Failed inserting tuple: {}".format(error_descriptor))
-
-        if file == "conference.csv":
+                        except mysql.connector.Error as e:
+                            print("Failed inserting tuple: {}".format(e))
+        
+        if file == "player.csv":
             first_line = True
             with open(folder + '/' + file, 'r') as f:
-                if first_line:
-                    first_line = False
-                    continue
-                
-                line = line.split(',')
-                conference_id = 
+                for line in f:
+                    if first_line:
+                        first_line = False
+                        continue
+
+                    line = line.split(',')
+                    player_id = line[0]
+                    team_id = line[1]
+                    first_name = line[3]
+                    last_name = line[2]
+                    number = line[4]
+                    class_year = line[5]
+                    position = line[6]
+                    pos_class = "NA" # TO-DO: filter all possible positions into respective categories
+
+                    insert_query = "INSERT INTO players (id, first_name, last_name, season, team_id, pos, position_class, number, class) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    query_params = (player_id, first_name, last_name, season, team_id, position, pos_class, number, class_year)
+
+                    try:
+                        cursor.execute(insert_query, query_params)
+                    except mysql.connector.Error as e:
+                        print("Failed inserting tuple: {}".format(e))
+
+connection.commit()
+connection.close()
