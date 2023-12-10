@@ -1,3 +1,4 @@
+-- SQLBook: Code
 DROP Schema if EXISTS cfbStats;
 CREATE Schema cfbStats;
 USE cfbStats;
@@ -15,28 +16,30 @@ CREATE TABLE teams (
     FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE SET NULL
 );
 CREATE TABLE players (
-    id INT(10),
+    id INT,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
     season VARCHAR(4),
     team_id INT,
     pos VARCHAR(4),
-    position_class VARCHAR(3),
-    number VARCHAR(3),
+    position_class VARCHAR(4),
+    number VARCHAR(20),
     class VARCHAR(2),
     PRIMARY KEY(id, season),
     FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE SET NULL
 );
 
--- CREATE TABLE games (
---     id
---     winner_id
---     loser_id
---     home_id
---     away_id
---     season
---     PRIMARY KEY(id)
--- );
+CREATE TABLE games (
+    id  VARCHAR(20),
+    -- winner_id
+    -- loser_id
+    home_id INT,
+    away_id INT,
+    season VARCHAR(4),
+    PRIMARY KEY(id),
+    FOREIGN KEY (home_id) REFERENCES teams(id) ON DELETE SET NULL,
+    FOREIGN KEY (away_id) REFERENCES teams(id) ON DELETE SET NULL
+);
 
 -- CREATE TABLE off_player_stats (
 --     player_id

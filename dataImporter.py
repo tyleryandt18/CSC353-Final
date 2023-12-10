@@ -67,14 +67,14 @@ def filter_pos(pos):
         the respective position class
     """
 
-    if pos in ("RB", "QB", "WR", "TE", "OL", "FB"):
+    if pos in ("RB", "QB", "WR", "TE", "OL", "OG", "OT", "C", "FB", "TB", "SE", "FL", "SB"):
         return "OFF"
-    elif pos in ("DB", "LB", "DL", "S"):
+    elif pos in ("DB", "LB", "DL", "S", "CB", "OLB", "DE", "DT", "FS", "ILB", "NT", "SS", "WLB", "NG", "DS", "SLB"):
         return "DEF"
-    elif pos in ("KR", "PR", "PK", "P", "K"):
+    elif pos in ("KR", "PR", "PK", "P", "K", "LS"):
         return "ST"
     else:
-        return "NULL"
+        return None
 
 # Iterate over csv files
 for folder in glob.glob("data/archive/cfbstats*"):
@@ -90,6 +90,13 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         continue
                     
                     line = line.split(',')
+
+                    i = 0
+                    for value in line:
+                        if value == '':
+                            line[i] = None
+                        i += 1
+                    
                     conference_id = line[0]
                     conference_name = line[1]
                     subdivison = line[2]
@@ -113,6 +120,13 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         continue
 
                     line = line.split(',')
+
+                    i = 0
+                    for value in line:
+                        if value == '':
+                            line[i] = None
+                        i += 1
+                    
                     team_id = line[0]
                     team_name = line[1]
                     conference_id = line[2]
@@ -126,7 +140,9 @@ for folder in glob.glob("data/archive/cfbstats*"):
                             cursor.execute(insert_query, query_params)
                         except mysql.connector.Error as e:
                             print("Failed inserting tuple: {}".format(e))
-        
+    
+    # Two for loops because the following data set depends on team's id for foreign key                      
+    for file in files:
         if file == "player.csv":
             first_line = True
             with open(folder + '/' + file, 'r') as f:
@@ -136,6 +152,13 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         continue
 
                     line = line.split(',')
+
+                    i = 0
+                    for value in line:
+                        if value == '':
+                            line[i] = None
+                        i += 1
+
                     player_id = line[0]
                     team_id = line[1]
                     first_name = line[3]
@@ -147,6 +170,34 @@ for folder in glob.glob("data/archive/cfbstats*"):
 
                     insert_query = "INSERT INTO players (id, first_name, last_name, season, team_id, pos, position_class, number, class) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                     query_params = (player_id, first_name, last_name, season, team_id, position, pos_class, number, class_year)
+
+                    try:
+                        cursor.execute(insert_query, query_params)
+                    except mysql.connector.Error as e:
+                        print("Failed inserting tuple: {}".format(e))
+
+        if file == "game.csv":
+            first_line = True
+            with open(folder + '/' + file, 'r') as f:
+                for line in f:
+                    if first_line:
+                        first_line = False
+                        continue
+
+                    line = line.split(',')
+
+                    i = 0
+                    for value in line:
+                        if value == '':
+                            line[i] = None
+                        i += 1
+                
+                    game_id = line[0]
+                    home_id = line[3]
+                    away_id = line[2]
+
+                    insert_query = "INSERT INTO games (id, home_id, away_id, season) VALUES (%s, %s, %s, %s)"
+                    query_params = (game_id, home_id, away_id, season)
 
                     try:
                         cursor.execute(insert_query, query_params)
