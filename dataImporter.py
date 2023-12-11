@@ -67,11 +67,11 @@ def filter_pos(pos):
         the respective position class
     """
 
-    if pos in ("RB", "QB", "WR", "TE", "OL", "OG", "OT", "C", "FB", "TB", "SE", "FL", "SB"):
+    if pos in ("RB", "QB", "WR", "TE", "OL", "OG", "OT", "C", "FB", "TB", "SE", "FL", "SB", "HB"):
         return "OFF"
-    elif pos in ("DB", "LB", "DL", "S", "CB", "OLB", "DE", "DT", "FS", "ILB", "NT", "SS", "WLB", "NG", "DS", "SLB"):
+    elif pos in ("DB", "LB", "DL", "S", "CB", "OLB", "DE", "DT", "FS", "ILB", "NT", "SS", "WLB", "NG", "DS", "SLB", "MLB", "ROV", "RV"):
         return "DEF"
-    elif pos in ("KR", "PR", "PK", "P", "K", "LS"):
+    elif pos in ("KR", "PR", "PK", "P", "K", "LS", "HOLD"):
         return "ST"
     else:
         return None
