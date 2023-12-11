@@ -96,6 +96,7 @@ for folder in glob.glob("data/archive/cfbstats*"):
 
                     i = 0
                     for value in line:
+                        line[i] = value.replace('"', '') # clean csv formatting
                         if value == '':
                             line[i] = None
                         i += 1
@@ -126,6 +127,7 @@ for folder in glob.glob("data/archive/cfbstats*"):
 
                     i = 0
                     for value in line:
+                        line[i] = value.strip('"') # clean csv formatting
                         if value == '':
                             line[i] = None
                         i += 1
@@ -156,6 +158,7 @@ for folder in glob.glob("data/archive/cfbstats*"):
 
                     i = 0
                     for value in line:
+                        line[i] = value.strip('"') # clean csv formatting
                         if value == '':
                             line[i] = None
                         i += 1
@@ -187,6 +190,7 @@ for folder in glob.glob("data/archive/cfbstats*"):
 
                     i = 0
                     for value in line:
+                        line[i] = value.strip('"') # clean csv formatting
                         if value == '':
                             line[i] = None
                         i += 1
@@ -195,6 +199,10 @@ for folder in glob.glob("data/archive/cfbstats*"):
                     team_id = line[1]
                     first_name = line[3]
                     last_name = line[2]
+
+                    if first_name == 'Team' or last_name == 'Team':
+                        continue
+
                     number = line[4]
                     class_year = line[5]
                     position = line[6]
@@ -220,6 +228,7 @@ for folder in glob.glob("data/archive/cfbstats*"):
 
                     i = 0
                     for value in line:
+                        line[i] = value.strip('"') # clean csv formatting
                         if value == '':
                             line[i] = None
                         i += 1
@@ -232,6 +241,8 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         loser_score = games[game_id][1][1]
                     except Exception:
                         print("Game {} not found.".format(game_id))
+                        winner_id, loser_id, winner_score, loser_score = None
+
                     home_id = line[3]
                     away_id = line[2]
 
