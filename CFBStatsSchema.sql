@@ -31,12 +31,16 @@ CREATE TABLE players (
 
 CREATE TABLE games (
     id  VARCHAR(20),
-    -- winner_id
-    -- loser_id
+    winner_id INT,
+    loser_id INT,
+    winner_score VARCHAR(3),
+    loser_score VARCHAR(3),
     home_id INT,
     away_id INT,
     season VARCHAR(4),
-    PRIMARY KEY(id),
+    PRIMARY KEY(id, season),
+    FOREIGN KEY (winner_id) REFERENCES teams(id) ON DELETE SET NULL,
+    FOREIGN KEY (loser_id) REFERENCES teams(id) ON DELETE SET NULL,
     FOREIGN KEY (home_id) REFERENCES teams(id) ON DELETE SET NULL,
     FOREIGN KEY (away_id) REFERENCES teams(id) ON DELETE SET NULL
 );

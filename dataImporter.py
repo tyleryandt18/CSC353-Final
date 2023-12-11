@@ -78,8 +78,11 @@ def filter_pos(pos):
 
 # Iterate over csv files
 for folder in glob.glob("data/archive/cfbstats*"):
-    season = folder.split("-")[2]
     files = os.listdir(folder)
+
+    season = folder.split("-")[2]
+    games = {} # reset the game for each new season (each new set of files)
+
     for file in files:
         if file == "conference.csv":
             first_line = True
@@ -140,6 +143,35 @@ for folder in glob.glob("data/archive/cfbstats*"):
                             cursor.execute(insert_query, query_params)
                         except mysql.connector.Error as e:
                             print("Failed inserting tuple: {}".format(e))
+
+        if file == "team-game-statistics.csv":
+            first_line = True
+            with open(folder + '/' + file, 'r') as f:
+                for line in f:
+                    if first_line:
+                        first_line = False
+                        continue
+
+                    line = line.split(',')
+
+                    i = 0
+                    for value in line:
+                        if value == '':
+                            line[i] = None
+                        i += 1
+        
+                    game_id = line[1]
+                    team_id = line[0]
+                    team_score = line[35]
+
+                    if game_id not in games:
+                        games[game_id] = [[team_id, team_score]]
+                    elif len(games[game_id]) == 1:
+                        # Put the higher score first, therefore the winner is always first in the data structure
+                        if int(team_score) > int(games[game_id][0][1]):
+                            games[game_id].insert(0, [team_id, team_score])
+                        else:
+                            games[game_id].append([team_id, team_score])
     
     # Two for loops because the following data set depends on team's id for foreign key                      
     for file in files:
@@ -193,11 +225,18 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         i += 1
                 
                     game_id = line[0]
+                    try:
+                        winner_id = games[game_id][0][0]
+                        loser_id = games[game_id][1][0]
+                        winner_score = games[game_id][0][1]
+                        loser_score = games[game_id][1][1]
+                    except Exception:
+                        print("Game {} not found.".format(game_id))
                     home_id = line[3]
                     away_id = line[2]
 
-                    insert_query = "INSERT INTO games (id, home_id, away_id, season) VALUES (%s, %s, %s, %s)"
-                    query_params = (game_id, home_id, away_id, season)
+                    insert_query = "INSERT INTO games (id, winner_id, loser_id, winner_score, loser_score, home_id, away_id, season) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                    query_params = (game_id, winner_id, loser_id, winner_score, loser_score, home_id, away_id, season)
 
                     try:
                         cursor.execute(insert_query, query_params)
