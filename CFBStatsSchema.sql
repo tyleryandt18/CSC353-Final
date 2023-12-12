@@ -45,76 +45,100 @@ CREATE TABLE games (
     FOREIGN KEY (away_id) REFERENCES teams(id) ON DELETE SET NULL
 );
 
--- CREATE TABLE off_player_stats (
---     player_id
---     season
---     pos
---     rush_att
---     rush_yds
---     rush_tds
---     pass_att
---     pass_cmps
---     pass_yds
---     pass_tds
---     pass_ints
---     pass_conv
---     rec
---     rec_yds
---     rec_tds
---     fumbles
---     fumbles_lost
---     PRIMARY KEY(player_id, season)
--- );
+CREATE TABLE off_player_stats (
+    player_id INT,
+    team_id INT,
+    game_id VARCHAR(20),
+    season VARCHAR(4),
+    pos VARCHAR(4),
+    rush_att INT,
+    rush_yds INT,
+    rush_tds INT, 
+    pass_att INT,
+    pass_cmps INT,
+    pass_yds INT,
+    pass_tds INT,
+    ints INT,
+    rec INT,
+    rec_yds INT,
+    rec_tds INT,
+    fumbles INT,
+    fumbles_lost INT,
+    PRIMARY KEY(player_id, season, game_id),
+    FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+);
 
--- CREATE TABLE def_player_stats (
---     player_id
---     season
---     pos
---     fum_rec
---     fum_ret_yds
---     fum_ret_tds
---     interceptions
---     int_ret_yds
---     int_ret_tds
---     safeties
---     tackles_solo
---     tackles_assisted
---     tackles_forloss
---     sacks
---     qb_hurries
---     forced_fumbles
---     pass_broken_up
---     PRIMARY KEY(player_id, season)
--- );
+CREATE TABLE def_player_stats (
+    player_id INT,
+    team_id INT,
+    game_id VARCHAR(20),
+    season VARCHAR(20),
+    pos VARCHAR(4),
+    fum_rec INT,
+    fum_ret_tds INT,
+    ints INT,
+    int_ret_tds INT,
+    safeties INT, 
+    tackles_solo INT,
+    tackles_assisted INT,
+    tackles_forloss INT,
+    sacks INT,
+    qb_hurries INT,
+    forced_fumbles INT, 
+    pass_broken_up INT,
+    PRIMARY KEY(player_id, season, game_id),
+    FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+);
 
--- CREATE TABLE st_player_stats (
---     player_id
---     season
---     pos
---     kickoff_ret
---     kickoff_ret_yds
---     kickoff_ret_tds
---     punt_ret
---     punt_ret_yds
---     punt_ret_tds
---     fg_att
---     fg_made
---     xp_att
---     xp_made
---     punts
---     punt_yds
---     kickoffs
---     kickoff_yds
---     kickoff_touchbacks
---     kickoff_outofbounds
---     onside_kicks
---     kicks_blocked
---     PRIMARY KEY(player_id, season)
--- );
+CREATE TABLE st_player_stats (
+    player_id INT,
+    team_id INT,
+    game_id VARCHAR(20),
+    season VARCHAR(4),
+    pos VARCHAR(4),
+    kickoff_ret INT,
+    kickoff_ret_yds INT,
+    kickoff_ret_tds INT,
+    punt_ret INT,
+    punt_ret_yds INT,
+    punt_ret_tds INT,
+    fg_att INT,
+    fg_made INT,
+    xp_att INT,
+    xp_made INT,
+    punts INT,
+    punt_yds INT, 
+    kickoffs INT,
+    kickoff_touchbacks INT,
+    kickoff_outofbounds INT,
+    kicks_blocked INT,
+    PRIMARY KEY(player_id, season, game_id),
+    FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+);
 
--- CREATE TABLE team_stats (
---     team_id
---     season
---     ...
---     PRIMARY KEY(team_id, season)
--- );
+CREATE TABLE team_stats (
+    team_id INT,
+    game_id VARCHAR(20),
+    season VARCHAR(4),
+    points_scored INT,
+    time_of_possesion INT,
+    penalties INT,
+    penalty_yds INT,
+    3rd_down_att INT,
+    3rd_down_conv INT,
+    4th_down_att INT,
+    4th_down_conv INT,
+    redzone_att INT,
+    redzone_tds INT,
+    redzone_fgs INT,
+    PRIMARY KEY(team_id, season, game_id),
+    -- FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+    
+);
