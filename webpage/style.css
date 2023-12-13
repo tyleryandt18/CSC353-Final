@@ -1,0 +1,118 @@
+
+/* [ Box [ Margin [ Border [ Padding [ Content ] Padding ] Border ] Margin ] Box ]
+
+	Margin: Limit around the border
+	Padding: Limit inside the border
+
+	https://www.w3schools.com/Css/css_boxmodel.asp
+*/
+
+* {
+	box-sizing: border-box;
+	background-color: antiquewhite;
+	font-family: Roboto;
+}
+
+body {
+	/* List font names/families in order of preference */
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+header {
+	background-color: rgb(112, 71, 71);
+	padding: 30px;
+	text-align: center;
+	font-size: 25px;
+	color: white;
+}
+
+header p {
+	font-size: 10px;
+}
+
+th {
+	border: 1px solid black;
+	padding: 5px;
+}
+
+.input-label{
+	font-weight: bold;
+	font-size: large;
+}
+
+input {
+	border-radius: 5px;
+	border: 1px solid black;
+	font-size: 15px;
+	padding: 5px;
+	width: 250px;
+}
+
+.city {
+	background-color: rgb(161, 131, 126);
+	color: orange;
+	border: 2px solid black;
+	margin: 20px;
+	padding: 20px;
+}
+
+.country {
+	background-color: rgb(161, 131, 126);
+	color: blue;
+	border: 2px solid black;
+	margin: 20px;
+	padding: 20px;
+}
+
+nav {
+	text-align: center;
+	padding-bottom: 10px;
+	border-bottom: solid 2px black;
+}
+
+h1 {
+	text-align: center;
+}
+
+a {
+	padding: 10px;
+	color: black;
+}
+
+.button-wrapper {
+	display: flex;
+	justify-content: center;
+	gap: 5px;
+}
+
+button {
+	background-color:darkseagreen;
+	color: black;
+	font-size: 20px;
+	border-radius: 10px;
+	border: 1px solid black;
+	padding: 5px;
+}
+
+button:hover {
+	background-color: lightgray;
+}
+
+button:active {
+	background-color: lightseagreen;
+}
+
+.center {
+	text-align: center;
+	justify-content: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 25px;
+
+}
+
+.result-table {
+	border: 1px solid black;
+
+}
