@@ -55,6 +55,7 @@ cursor = connection.cursor()
 # Keep track of seen data entries
 teams = {}
 conferences = {}
+team_stats = {}
 
 def filter_pos(pos):
     """
@@ -168,7 +169,7 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         if value == '':
                             line[i] = None
                         i += 1
-        
+
                     game_id = line[1]
                     team_id = line[0]
                     top = line[-10]
@@ -192,17 +193,11 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         else:
                             games[game_id].append([team_id, team_score])
 
-                    insert_query = """INSERT INTO team_stats
-                    (team_id, game_id, season, points_scored, time_of_possesion, penalties, penalty_yds,
-                    3rd_down_att, 3rd_down_conv, 4th_down_att, 4th_down_conv, redzone_att, redzone_tds, redzone_fgs) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
                     query_params = (team_id, game_id, season, team_score, top, penalties, penalty_yds,
                                     third_att, third_conv, fourth_att, fourth_conv, rz_att, rz_td, rz_fg)
 
-                    try:
-                        cursor.execute(insert_query, query_params)
-                    except mysql.connector.Error as e:
-                        print("Failed inserting tuple: {}".format(e))
+                    # save query information for later because we need to populate the games entity before tema_stats
+                    team_stats[(team_id, game_id)] = query_params
     
         elif file == "player.csv":
             first_line = True
@@ -297,6 +292,24 @@ for folder in glob.glob("data/archive/cfbstats*"):
                         cursor.execute(insert_query, query_params)
                     except mysql.connector.Error as e:
                         print("Failed inserting tuple: {}".format(e))
+
+                    # Enter team stats
+                    insert_query = """INSERT INTO team_stats
+                    (team_id, game_id, season, points_scored, time_of_possesion, penalties, penalty_yds,
+                    3rd_down_att, 3rd_down_conv, 4th_down_att, 4th_down_conv, redzone_att, redzone_tds, redzone_fgs) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                    query_params = team_stats[(home_id, game_id)]
+                    try:
+                        cursor.execute(insert_query, query_params)
+                    except mysql.connector.Error as e:
+                        print("Failed inserting tuple: {}".format(e))
+                    query_params = team_stats[(away_id, game_id)]
+                    try:
+                        cursor.execute(insert_query, query_params)
+                    except mysql.connector.Error as e:
+                        print("Failed inserting tuple: {}".format(e))
+                    
+
 
         elif file == "player-game-statistics.csv":
             first_line = True
