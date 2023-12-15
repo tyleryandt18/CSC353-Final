@@ -40,7 +40,7 @@ function getPlayerStats(season, player, pos, callback) {
 		table = "st_player_stats";
 	}
 
-	const query = "SELECT CONCAT(p.first_name, ' ', p.last_name) as name, tb.* FROM " + table + " as tb JOIN players p ON tb.player_id = p.id WHERE CONCAT(p.first_name, ' ', p.last_name) = ? AND p.season = ?";
+	const query = "SELECT CONCAT(p.first_name, ' ', p.last_name) as name, tb.* FROM " + table + " as tb JOIN players p ON tb.player_id = p.id WHERE CONCAT(p.first_name, ' ', p.last_name) = ? AND tb.season = ?";
 	connection.query(query, [player, season], (error, results, fields) => {
 		if (error) throw error;
 		
