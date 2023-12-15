@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>College Football Statistics</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<nav>
+		<h1 class="title">College Football Statistics (2005-2013)</h1>
+	</nav>
+	<h1>Investigate Your Favorite Player's Statistics</h1>
+
+	<div style="text-align: center; justify-content: center;">
+		<label class="input-label" for="conference">Conference:</label>
+		<select id="conference" name="conference">
+			<option value="">Select Conference:</option>
+			<option value="Atlantic 10">Atlantic 10</option>
+			<option value="Atlantic Coast Conference">Atlantic Coast Conference</option>
+			<option value="Big 12 Conference">Big 12 Conference</option>
+			<option value="Big East Conference">Big East Conference</option>
+			<option value="Big Sky">Big Sky</option>
+			<option value="Big South">Big South</option>
+			<option value="Big Ten Conference">Big Ten Conference</option>
+			<option value="Colonial">Colonial</option>
+			<option value="Conference USA">Conference USA</option>
+			<option value="Gateway Football Conference">Gateway Football Conference</option>
+			<option value="Independent">Independent</option>
+			<option value="Ind.">Ind.</option>
+			<option value="Ivy">Ivy</option>
+			<option value="Metro Atlantic">Metro Atlantic</option>
+			<option value="Mid-American Conference">Mid-American Conference</option>
+			<option value="Mid-Eastern">Mid-Eastern</option>
+			<option value="Mountain West Conference">Mountain West Conference</option>
+			<option value="Northeast">Northeast</option>
+			<option value="Ohio Valley">Ohio Valley</option>
+			<option value="Pacific-10 Conference">Pacific-10 Conference</option>
+			<option value="Patriot">Patriot</option>
+			<option value="Pioneer Football League">Pioneer Football League</option>
+			<option value="SEC">Southeastern Conference</option>
+			<option value="Southern">Southern</option>
+			<option value="Southland">Southland</option>
+			<option value="Southwestern">Southwestern</option>
+			<option value="Sun Belt Conference">Sun Belt Conference</option>
+			<option value="Western Athletic Conference">Western Athletic Conference</option>
+		</select>
+	
+		<label class="input-label" for="season">Season:</label>
+		<select id="season" name="season">
+			<option value="2005">2005</option>
+			<option value="2006">2006</option>
+			<option value="2007">2007</option>
+			<option value="2008">2008</option>
+			<option value="2009">2009</option>
+			<option value="2010">2010</option>
+			<option value="2011">2011</option>
+			<option value="2012">2012</option>
+			<option value="2013">2013</option>
+		</select>
+	
+		<label class="input-label" for="pos_class">Position Class:</label>
+		<select id="pos_class" name="pos_class">
+			<option value="OFF">OFF</option>
+			<option value="DEF">DEF</option>
+			<option value="ST">ST</option>
+		</select>
+	
+		<label class="input-label" for="team">Team:</label>
+		<select id="team" name="team">
+		</select>
+	
+		<label class="input-label" for="player">Player:</label>
+		<select id="player" name="player">
+		</select>
+		<br><br>
+	</div>
+	<div class="center">
+		<div class="button-wrapper">
+			<button onclick="getPlayerData()" id="display">Click to Display Player Stats</button>
+			<button onclick="aggregateStats(true)" id="avg">Average the Statistics</button>
+			<button onclick="aggregateStats(false)" id="sum">Sum the Statistics</button>
+		</div>
+
+	<div id="display"></div>
+		<table class="result-table" id="myTable">
+		</table>
+	</div>
+
+	<br><br>
+	<footer>
+		Data provided from <a href="https://www.kaggle.com/datasets/mhixon/college-football-statistics/" target="_blank">Kaggle</a>
+		<div>
+			<h6>
+				Coded by: John Matsudaira, Parker McNamara, Tyler Yandt
+			</h6>
+		</div>
+	</footer>
+</body>
+
+<script>
+	var conferenceSelect = document.getElementById('conference');
+	var teamSelect = document.getElementById("team");
+	var playerSelect = document.getElementById("player");
+	var seasonSelect = document.getElementById("season");
+	var posSelect = document.getElementById("pos_class");
+
+	var displayButton = document.getElementById("display");
+	var sumButton = document.getElementById("sum");
+	var avgButton = document.getElementById("avg");
+
+	displayButton.disabled = true;
+	sumButton.disabled = true;
+	avgButton.disabled = true;
+
+
+	conferenceSelect.addEventListener('change', function () {
+		var conference = conferenceSelect.value;
+
+		console.log(conference);
+
+		teamSelect.innerHTML = '<option value="">Select Team</option>';
+
+		let teamSelectURL = new URLSearchParams({conference_name: conference})
+		let URLstring = "/getTeam?" + teamSelectURL
+
+		console.log(URLstring)
+
+		const responsePromise = fetch(URLstring, {
+			method: "GET",
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		});
+
+		responsePromise.then(
+			// Fulfilled
+			async (response) => {
+				console.log(response);
+				populateList(teamSelect, await response.json());
+			},
+			// Error
+			(error) => {
+				alert("Cannot fetch team")
+			})
+	});
+
+	posSelect.addEventListener('change', function () {
+		var team = teamSelect.value;
+		var season = seasonSelect.value;
+		var pos = posSelect.value;
+
+		console.log(conference);
+
+		playerSelect.innerHTML = '<option value="">Select Player</option>';
+
+		let teamSelectURL = new URLSearchParams({team_name: team, season: season, pos_class: pos})
+		let URLstring = "/getPlayer?" + teamSelectURL
+
+		const responsePromise = fetch(URLstring, {
+			method: "GET",
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		});
+
+		responsePromise.then(
+			// Fulfilled
+			async (response) => {
+				console.log(response);
+				populateList(playerSelect, await response.json());
+			},
+			// Error
+			(error) => {
+				alert("Cannot fetch player")
+			})
+	})
+
+	seasonSelect.addEventListener('change', function () {
+		var team = teamSelect.value;
+		var season = seasonSelect.value;
+		var pos = posSelect.value;
+
+		playerSelect.innerHTML = '<option value="">Select Player</option>';
+
+		let seasonSelectURL = new URLSearchParams({team_name: team, season: season, pos_class: pos})
+		let URLstring = "/getPlayer?" + seasonSelectURL
+
+		const responsePromise = fetch(URLstring, {
+			method: "GET",
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		});
+
+		responsePromise.then(
+			// Fulfilled
+			async (response) => {
+				populateList(playerSelect, await response.json());
+			},
+			// Error
+			(error) => {
+				alert("Cannot fetch player")
+			})
+	});
+
+	teamSelect.addEventListener('change', function () {
+		var team = teamSelect.value;
+		var season = seasonSelect.value;
+		var pos = posSelect.value;
+
+		playerSelect.innerHTML = '<option value="">Select Player</option>';
+
+		let teamSelectURL = new URLSearchParams({team_name: team, season: season, pos_class: pos})
+		let URLstring = "/getPlayer?" + teamSelectURL
+
+		const responsePromise = fetch(URLstring, {
+			method: "GET",
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		});
+
+		responsePromise.then(
+			// Fulfilled
+			async (response) => {
+				populateList(playerSelect, await response.json());
+			},
+			// Error
+			(error) => {
+				alert("Cannot fetch player")
+			})
+	});
+	
+	playerSelect.addEventListener("change", function() {
+		displayButton.disabled = false;
+	})
+
+	function populateList(list, results) {
+		results.forEach(result => {
+			var option = document.createElement("option");
+			option.value = result.name;
+			option.text = result.name;
+			list.appendChild(option);
+		})
+	}
+
+	function getPlayerData() {
+		let player = playerSelect.value;
+		let season = seasonSelect.value;
+		let pos = posSelect.value;
+
+		let playerSelectURL = new URLSearchParams({pos_class: pos, season: season, player_name: player})
+		let URLstring = "/getPlayerStats?" + playerSelectURL
+
+		const responsePromise = fetch(URLstring, {
+			method: "GET",
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			}
+		});
+
+		responsePromise.then(
+			// Fulfilled
+			async (response) => {
+				populateTable(await response.json());
+			},
+			// Error
+			(error) => {
+				alert("Cannot fetch player")
+			})
+	}
+
+    function clearTable(index) {
+        let myTable = document.getElementById("myTable");
+
+        for(let i = myTable.rows.length - 1; i >= index; i--){
+            myTable.deleteRow(i);
+        }
+    }
+
+	function aggregateStats(bool) {
+		let myTable = document.getElementById('myTable');
+
+		sumButton.disabled = true;
+		avgButton.disabled = true;
+
+		let rows = myTable.rows.length;
+		let cols = myTable.rows[0].cells.length;
+
+		let stats = new Array(cols - 4).fill(0);
+
+		for(let i = 1; i < rows; i++){
+			for (let j = 4; j < cols; j++){
+				let val = parseFloat(myTable.rows[i].cells[j].innerText);
+				stats[j - 4] += val;
+			}
+		}
+
+		let body = document.createElement('tbody');
+		let row = body.insertRow();
+
+		for (let i = 0; i < 4; i++){
+			let data = document.createElement('td');
+			data.textContent = myTable.rows[1].cells[i].textContent;
+			row.appendChild(data);
+		}
+
+		clearTable(1);
+
+		for(let i = 0; i < stats.length; i++){
+			if (bool){ // average
+				stats[i] = (stats[i] / (rows - 1)).toFixed(2);
+			} // else, leave the sum
+			let data = document.createElement('td');
+			data.textContent = stats[i];
+			row.appendChild(data);
+		}
+
+		myTable.appendChild(body);
+	}
+
+	function populateTable(results) {
+		let myTable = document.getElementById("myTable");
+		let team = teamSelect.value;
+
+		sumButton.disabled = false;
+		avgButton.disabled = false;
+
+		clearTable(0);
+
+		let tableHeaders = document.createElement('thead');
+		let headers = tableHeaders.insertRow();
+
+		if (results == null){
+			let header = document.createElement('th');
+			header.textContent = "No results found.";
+			return;
+		}
+		
+		let header = document.createElement('th');
+		header.textContent = "team";
+		headers.appendChild(header);
+		
+		let body = document.createElement('tbody');
+
+		try {
+			Object.keys(results[0]).forEach((attr , index) => {
+				if(index < 1 || index > 3){
+					let header = document.createElement('th');
+					header.textContent = attr;
+					headers.appendChild(header);
+				}});
+			myTable.appendChild(tableHeaders);
+
+			results.forEach(result => {
+				let row = body.insertRow();
+				let teamData = document.createElement('td');
+				teamData.textContent = team;
+				row.appendChild(teamData);
+				Object.values(result).forEach((attr, index) => {
+					if(index < 1 || index > 3){
+						let data = document.createElement('td');
+						data.textContent = attr;
+						row.appendChild(data);
+					}
+				})
+				body.appendChild(row);
+			});
+
+			myTable.appendChild(body);
+		} catch {
+			alert("Relevant player data missing. Try a different query.")
+		}
+	}
+</script>
+
+</html>

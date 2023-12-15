@@ -16,37 +16,39 @@ app.use(express.static('.'))
 
 // For GET requests to "/student?field1=value1&field2=value2"
 
-app.get('/playerAttributes', function(request, response){
+app.get('/getTeam', function(request, response){
     // If we have fields available
     // console.log(request.query["field1"]);
 
-    let playerName = request.query["player_name"]
+    let conferenceName = request.query["conference_name"]
 
-    db.queryCallbackPlayer(playerName, (results) => {
+    db.getTeamFromConference(conferenceName, (results) => {
         response.json(results)
     })
 });
 
-app.get('/tourney', function(request, response){
+app.get('/getPlayer', function(request, response){
     // If we have fields available
     // console.log(request.query["field1"]);
 
-    let date = request.query["date"]
+    let teamName = request.query["team_name"]
+    let season = request.query["season"]
+    let pos = request.query["pos_class"]
 
-    db.queryCallbackTourney(date, (results) => {
+    db.getPlayerFromTeam(teamName, season, pos, (results) => {
         response.json(results)
     })
 });
 
-app.get('/playerStats', function(request, response){
+app.get('/getPlayerStats', function(request, response){
     // If we have fields available
     // console.log(request.query["field1"]);
 
-    let player = request.query["player"]
-    let start = request.query["start"]
-    let end = request.query["end"]
+    let season = request.query["season"]
+    let player = request.query["player_name"]
+    let pos = request.query["pos_class"]
 
-    db.queryCallbackStats(player, start, end, (results) => {
+    db.getPlayerStats(season, player, pos, (results) => {
         response.json(results)
     })
 });
