@@ -42,7 +42,7 @@
 			<option value="Pacific-10 Conference">Pacific-10 Conference</option>
 			<option value="Patriot">Patriot</option>
 			<option value="Pioneer Football League">Pioneer Football League</option>
-			<option value="SEC">Southeastern Conference</option>
+			<option value="Southeastern Conference">Southeastern Conference</option>
 			<option value="Southern">Southern</option>
 			<option value="Southland">Southland</option>
 			<option value="Southwestern">Southwestern</option>
@@ -245,6 +245,7 @@
 			var option = document.createElement("option");
 			option.value = result.name;
 			option.text = result.name;
+			console.log(result.name);
 			list.appendChild(option);
 		})
 	}
